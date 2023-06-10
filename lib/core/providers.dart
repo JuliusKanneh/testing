@@ -26,5 +26,9 @@ final appwriteStorageprovider = Provider((ref) {
   return Storage(ref.watch(appwriteClientProvider));
 });
 
+final appwriteRealtimeProvider = Provider((ref) {
+  return Realtime(ref.watch(appwriteClientProvider));
+});
+
 ///Note on when to create a provider: whenever what u want to provide is a dependency. 
 ///This helps with testing.

@@ -16,7 +16,7 @@ final tweetControllerProvider =
     StateNotifierProvider<TweetController, bool>((ref) {
   return TweetController(
     ref: ref,
-    tweetAPI: ref.watch(tweetProvider),
+    tweetAPI: ref.watch(tweetAPIProvider),
     storageAPI: ref.watch(StorageAPIProvider),
   );
 });
@@ -24,6 +24,11 @@ final tweetControllerProvider =
 final getTweetsProvider = FutureProvider((ref) {
   final tweetController = ref.watch(tweetControllerProvider.notifier);
   return tweetController.getTweets();
+});
+
+final getLatestTweetProvider = StreamProvider((ref) {
+  final tweetAPI = ref.watch(tweetAPIProvider);
+  return tweetAPI.getLatestTweet();
 });
 
 class TweetController extends StateNotifier<bool> {
