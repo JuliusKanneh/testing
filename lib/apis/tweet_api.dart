@@ -12,6 +12,7 @@ abstract class ITweetAPI {
   Future<List<Document>> getTweets();
   Stream<RealtimeMessage> getLatestTweet();
   FutureEither<Document> likeTweet(Tweet tweet);
+  FutureEither<Document> updateReshareCount(Tweet tweet);
 }
 
 final tweetAPIProvider = Provider((ref) {
@@ -68,7 +69,7 @@ class TweetAPI implements ITweetAPI {
   @override
   Stream<RealtimeMessage> getLatestTweet() {
     return _realtime.subscribe([
-      'databases.${AppwriteConstants.databaseId}.colleections.${AppwriteConstants.tweetCollectionId}.documents'
+      'databases.${AppwriteConstants.databaseId}.collections.${AppwriteConstants.tweetCollectionId}.documents'
     ]).stream;
   }
 
@@ -88,6 +89,35 @@ class TweetAPI implements ITweetAPI {
       return left(
         Failure(
           e.message ?? 'Some error occured!',
+          st,
+        ),
+      );
+    } catch (e, st) {
+      return left(
+        Failure(
+          e.toString(),
+          st,
+        ),
+      );
+    }
+  }
+
+  @override
+  FutureEither<Document> updateReshareCount(Tweet tweet) async {
+    try {
+      var document = await _db.updateDocument(
+        databaseId: AppwriteConstants.databaseId,
+        collectionId: AppwriteConstants.tweetCollectionId,
+        documentId: tweet.id,
+        data: {
+          'reshareCount': tweet.reshareCount,
+        },
+      );
+      return right(document);
+    } on AppwriteException catch (e, st) {
+      return left(
+        Failure(
+          e.message!,
           st,
         ),
       );

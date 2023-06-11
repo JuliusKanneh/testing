@@ -15,6 +15,7 @@ class Tweet {
   final String id;
   final String uid;
   final int reshareCount;
+  final String retweetedBy;
   const Tweet({
     required this.text,
     required this.hashtags,
@@ -27,6 +28,7 @@ class Tweet {
     required this.id,
     required this.uid,
     required this.reshareCount,
+    required this.retweetedBy,
   });
 
   Tweet copyWith({
@@ -41,6 +43,7 @@ class Tweet {
     String? id,
     String? uid,
     int? reshareCount,
+    String? retweetedBy,
   }) {
     return Tweet(
       text: text ?? this.text,
@@ -54,6 +57,7 @@ class Tweet {
       id: id ?? this.id,
       uid: uid ?? this.uid,
       reshareCount: reshareCount ?? this.reshareCount,
+      retweetedBy: retweetedBy ?? this.retweetedBy,
     );
   }
 
@@ -69,6 +73,7 @@ class Tweet {
       'commentIds': commentIds,
       'uid': uid,
       'reshareCount': reshareCount,
+      'retweetedBy': retweetedBy,
     };
   }
 
@@ -85,12 +90,13 @@ class Tweet {
       id: map['\$id'] ?? '',
       uid: map['uid'] ?? '',
       reshareCount: map['reshareCount']?.toInt() ?? 0,
+      retweetedBy: map['retweetedBy'] ?? '',
     );
   }
 
   @override
   String toString() {
-    return 'Tweet(text: $text, hashtags: $hashtags, link: $link, imageLinks: $imageLinks, tweetTypes: $tweetTypes, tweetedAt: $tweetedAt, likes: $likes, commentIds: $commentIds, id: $id, uid: $uid, reshareCount: $reshareCount)';
+    return 'Tweet(text: $text, hashtags: $hashtags, link: $link, imageLinks: $imageLinks, tweetTypes: $tweetTypes, tweetedAt: $tweetedAt, likes: $likes, commentIds: $commentIds, id: $id, uid: $uid, reshareCount: $reshareCount, retweetedBy: $retweetedBy)';
   }
 
   @override
@@ -108,7 +114,8 @@ class Tweet {
         listEquals(other.commentIds, commentIds) &&
         other.id == id &&
         other.uid == uid &&
-        other.reshareCount == reshareCount;
+        other.reshareCount == reshareCount &&
+        other.retweetedBy == retweetedBy;
   }
 
   @override
@@ -123,6 +130,7 @@ class Tweet {
         commentIds.hashCode ^
         id.hashCode ^
         uid.hashCode ^
-        reshareCount.hashCode;
+        reshareCount.hashCode ^
+        retweetedBy.hashCode;
   }
 }
