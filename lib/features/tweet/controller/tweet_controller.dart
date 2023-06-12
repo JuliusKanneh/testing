@@ -27,9 +27,21 @@ final getTweetsProvider = FutureProvider((ref) {
   return tweetController.getTweets();
 });
 
+final getRepliesToTweetProvider = FutureProvider.family((
+  ref,
+  Tweet tweet,
+) async {
+  return ref.watch(tweetControllerProvider.notifier).getRepliesToTweet(tweet);
+});
+
 final getLatestTweetProvider = StreamProvider((ref) {
   final tweetAPI = ref.watch(tweetAPIProvider);
   return tweetAPI.getLatestTweet();
+});
+
+final getTweetByIdProvider = FutureProvider.family((ref, String id) async {
+  final tweetController = ref.watch(tweetControllerProvider.notifier);
+  return tweetController.getTweetById(id);
 });
 
 class TweetController extends StateNotifier<bool> {
@@ -72,6 +84,7 @@ class TweetController extends StateNotifier<bool> {
       retweetedBy: currentUser.name,
       likes: [],
       commentIds: [],
+      tweetedAt: DateTime.now(),
       reshareCount: tweet.reshareCount + 1,
     );
 
@@ -95,10 +108,16 @@ class TweetController extends StateNotifier<bool> {
     });
   }
 
+  Future<List<Tweet>> getRepliesToTweet(Tweet tweet) async {
+    final documents = await _tweetAPI.getRepliesToTweet(tweet);
+    return documents.map((e) => Tweet.fromMap(e.data)).toList();
+  }
+
   void shareTweet({
     required List<File> images,
     required String text,
     required BuildContext context,
+    required String repliedTo,
   }) {
     if (text.isEmpty) {
       showSnackbar(context, 'Please enter text');
@@ -106,9 +125,18 @@ class TweetController extends StateNotifier<bool> {
     }
 
     if (images.isNotEmpty) {
-      _shareImageTweet(images: images, text: text, context: context);
+      _shareImageTweet(
+        images: images,
+        text: text,
+        context: context,
+        repliedTo: repliedTo,
+      );
     } else {
-      _shareTextTweet(text: text, context: context);
+      _shareTextTweet(
+        text: text,
+        context: context,
+        repliedTo: repliedTo,
+      );
     }
   }
 
@@ -116,6 +144,7 @@ class TweetController extends StateNotifier<bool> {
     required List<File> images,
     required String text,
     required BuildContext context,
+    required String repliedTo,
   }) async {
     state = true;
     final hashtags = _getHashTagFromText(text);
@@ -137,6 +166,7 @@ class TweetController extends StateNotifier<bool> {
       uid: user.uid,
       reshareCount: 0,
       retweetedBy: '',
+      repliedTo: repliedTo,
     );
 
     final res = await _tweetAPI.shareTweet(tweet);
@@ -147,6 +177,7 @@ class TweetController extends StateNotifier<bool> {
   void _shareTextTweet({
     required String text,
     required BuildContext context,
+    required String repliedTo,
   }) async {
     state = true;
     final hashtags = _getHashTagFromText(text);
@@ -167,11 +198,17 @@ class TweetController extends StateNotifier<bool> {
       reshareCount: 0,
       uid: user.uid,
       retweetedBy: '',
+      repliedTo: repliedTo,
     );
 
     final res = await _tweetAPI.shareTweet(tweet);
     state = false;
     res.fold((l) => showSnackbar(context, l.message), (r) => null);
+  }
+
+  Future<Tweet> getTweetById(String id) async {
+    final tweet = await _tweetAPI.getTweetById(id);
+    return Tweet.fromMap(tweet.data);
   }
 
   String _getLinkFromText(String text) {

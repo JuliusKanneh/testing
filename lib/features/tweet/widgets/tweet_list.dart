@@ -15,17 +15,14 @@ class TweetList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ref.watch(getTweetsProvider).when(
           data: (tweets) {
-            log(tweets.length.toString());
             return ref.watch(getLatestTweetProvider).when(
                   data: (data) {
                     log('Event: ${data.events}');
                     if (data.events.contains(
                         'databases.${AppwriteConstants.databaseId}.collections.${AppwriteConstants.tweetCollectionId}.documents.*.create')) {
-                      // log('Realtime: ${data.payload}');
                       tweets.insert(0, Tweet.fromMap(data.payload));
                     } else if (data.events.contains(
                         'databases.${AppwriteConstants.databaseId}.collections.${AppwriteConstants.tweetCollectionId}.documents.*.update')) {
-                      // log('Event: ${data.events[0]}');
                       final startingPoint =
                           data.events[0].lastIndexOf('documents.');
                       final endingPoint = data.events[0].lastIndexOf('.update');
