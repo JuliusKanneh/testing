@@ -94,7 +94,6 @@ class TweetCard extends ConsumerWidget {
                                     ),
                                   ],
                                 ),
-                                //Replied to
                                 if (tweet.repliedTo.isNotEmpty)
                                   ref
                                       .watch(getTweetByIdProvider(tweet.id))
@@ -127,11 +126,9 @@ class TweetCard extends ConsumerWidget {
                                           error: (error, st) => ErrorPage(
                                               error: error.toString()),
                                           loading: () => SizedBox()),
-
                                 HashTagText(text: tweet.text),
                                 if (tweet.tweetTypes == TweetType.image)
                                   CarouselImage(imageLinks: tweet.imageLinks),
-
                                 if (tweet.link.isNotEmpty) ...[
                                   const SizedBox(
                                     height: 4,
@@ -143,7 +140,6 @@ class TweetCard extends ConsumerWidget {
                                     link: tweet.link,
                                   ),
                                 ],
-
                                 Container(
                                   margin: const EdgeInsets.only(
                                     right: 10,

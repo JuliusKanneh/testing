@@ -12,6 +12,7 @@ import 'package:twitter_clone/models/user_model.dart';
 abstract class IUserAPI {
   FutureEitherVoid saveUserData(UserModel userModel);
   Future<Document> getUserData(String uid);
+  Future<List<Document>> searchUserByName(String name);
 }
 
 final userAPIProvider = Provider((ref) {
@@ -60,5 +61,17 @@ class UserAPI implements IUserAPI {
       collectionId: AppwriteConstants.userCollectionId,
       documentId: uid,
     );
+  }
+
+  @override
+  Future<List<Document>> searchUserByName(String name) async {
+    final documents = await _db.listDocuments(
+      databaseId: AppwriteConstants.databaseId,
+      collectionId: AppwriteConstants.userCollectionId,
+      queries: [
+        Query.search('name', name),
+      ],
+    );
+    return documents.documents;
   }
 }
