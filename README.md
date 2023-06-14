@@ -1,16 +1,1 @@
-# twitter_clone
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+‘Students Social Network’ is all in one social app for students to share their thoughts and happenings around them. It is a mobile app that was built using flutter ui kit from Google and the Appwrite backend as a service platform. The app allows users to network with each other, share their thoughts in the form of images, texts, emojis, etc. Users can follow other users to get notifications whenever that user makes a new post, etc.
