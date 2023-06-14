@@ -9,7 +9,7 @@ abstract class IStorageAPI {
   Future<List<String>> uploadImages(List<File> files);
 }
 
-final StorageAPIProvider = Provider((ref) {
+final storageAPIProvider = Provider((ref) {
   return StorageAPI(storage: ref.watch(appwriteStorageprovider));
 });
 

@@ -1,7 +1,7 @@
 class AppwriteConstants {
   static const String databaseId = '646f147985828a1d1a3d';
   static const String projectId = '646f0b7f1abb303dbb10';
-  static const String endpoint = 'http://192.168.1.70:80/v1';
+  static const String endpoint = 'http://192.168.1.70/v1';
 
   static const String userCollectionId = '64745253c814345c8071';
   static const String tweetCollectionId = '64804d924157c95507c7';

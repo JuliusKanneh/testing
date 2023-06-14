@@ -18,7 +18,7 @@ final tweetControllerProvider =
   return TweetController(
     ref: ref,
     tweetAPI: ref.watch(tweetAPIProvider),
-    storageAPI: ref.watch(StorageAPIProvider),
+    storageAPI: ref.watch(storageAPIProvider),
   );
 });
 
