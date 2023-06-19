@@ -7,6 +7,7 @@ import 'package:twitter_clone/core/providers.dart';
 
 abstract class IStorageAPI {
   Future<List<String>> uploadImages(List<File> files);
+  // Future<String> uploadImage(File file);
 }
 
 final storageAPIProvider = Provider((ref) {
@@ -31,4 +32,18 @@ class StorageAPI implements IStorageAPI {
     }
     return imageLinks;
   }
+
+  // @override
+  // Future<String> uploadImage({
+  //   required File file,
+  //   required UserModel userModel,
+  // }) async {
+  //   var uploadedFile = await _storage.createFile(
+  //     bucketId: AppwriteConstants.imageBucketId,
+  //     fileId: '\$id',
+  //     file: InputFile.fromPath(path: file.path),
+  //   );
+
+  //   return uploadedFile.name;
+  // }
 }

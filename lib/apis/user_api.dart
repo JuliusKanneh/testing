@@ -13,18 +13,24 @@ abstract class IUserAPI {
   FutureEitherVoid saveUserData(UserModel userModel);
   Future<Document> getUserData(String uid);
   Future<List<Document>> searchUserByName(String name);
+  FutureEitherVoid updateUserData(UserModel userModel);
+  Stream<RealtimeMessage> getLatestUserProfileData();
 }
 
 final userAPIProvider = Provider((ref) {
   return UserAPI(
     db: ref.watch(appwriteDatabaseProvider),
+    realtime: ref.watch(appwriteRealtimeProvider),
   );
 });
 
 class UserAPI implements IUserAPI {
   final Databases _db;
+  final Realtime _realtime;
 
-  UserAPI({required Databases db}) : _db = db;
+  UserAPI({required Databases db, required Realtime realtime})
+      : _db = db,
+        _realtime = realtime;
 
   @override
   FutureEitherVoid saveUserData(UserModel userModel) async {
@@ -73,5 +79,36 @@ class UserAPI implements IUserAPI {
       ],
     );
     return documents.documents;
+  }
+
+  @override
+  FutureEitherVoid updateUserData(UserModel userModel) async {
+    try {
+      await _db.updateDocument(
+        databaseId: AppwriteConstants.databaseId,
+        collectionId: AppwriteConstants.userCollectionId,
+        documentId: userModel.uid,
+        data: userModel.toMap(),
+      );
+      return right(null);
+    } catch (e, st) {
+      return left(
+        Failure(e.toString(), st),
+      );
+    }
+  }
+
+  @override
+  Stream<RealtimeMessage> getLatestUserProfileData() {
+    ///Approach one
+    ///get the current 'uid' from the parameter and use it in the subscription to subscribe to that particular user
+    ///document instead of subscribing to the entire user collection.
+    // return _realtime.subscribe([
+    //   'databases.${AppwriteConstants.databaseId}.collections.${AppwriteConstants.userCollectionId}.documents.$uid'
+    // ]).stream;
+
+    return _realtime.subscribe([
+      'databases.${AppwriteConstants.databaseId}.collections.${AppwriteConstants.userCollectionId}.documents'
+    ]).stream;
   }
 }

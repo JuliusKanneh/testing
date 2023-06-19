@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone/commons/common.dart';
 import 'package:twitter_clone/core/utils.dart';
 import 'package:twitter_clone/features/auth/controllers/auth_controller.dart';
+import 'package:twitter_clone/features/user_profile/controller/user_profile_controller.dart';
 import 'package:twitter_clone/theme/pallete.dart';
 
 class EditProfileView extends ConsumerStatefulWidget {
@@ -19,10 +20,19 @@ class EditProfileView extends ConsumerStatefulWidget {
 }
 
 class _EditProfileViewState extends ConsumerState<EditProfileView> {
-  final nameController = TextEditingController();
-  final bioController = TextEditingController();
+  late TextEditingController nameController;
+  late TextEditingController bioController;
   File? bannerFile;
   File? profilePicFile;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController(
+        text: ref.read(currentUserDetailsProvider).value?.name ?? '');
+    bioController = TextEditingController(
+        text: ref.read(currentUserDetailsProvider).value?.bio ?? '');
+  }
 
   @override
   void dispose() {
@@ -32,7 +42,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
   }
 
   void selectBannerImage() async {
-    var banner = await pickImage();
+    final banner = await pickImage();
     if (banner != null) {
       setState(() {
         bannerFile = banner;
@@ -41,7 +51,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
   }
 
   void selectProfileImage() async {
-    var profilePic = await pickImage();
+    final profilePic = await pickImage();
     if (profilePic != null) {
       setState(() {
         profilePicFile = profilePic;
@@ -52,6 +62,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(currentUserDetailsProvider).value;
+    final isLoading = ref.watch(userProfileControllerProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -59,12 +70,24 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
         centerTitle: false,
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              ref
+                  .read(userProfileControllerProvider.notifier)
+                  .updateUserProfile(
+                    user: user!.copyWith(
+                      bio: bioController.text,
+                      name: nameController.text,
+                    ),
+                    context: context,
+                    bannerFile: bannerFile,
+                    profilePicFile: profilePicFile,
+                  );
+            },
             child: const Text('Save'),
           ),
         ],
       ),
-      body: user == null
+      body: isLoading || user == null
           ? const Loader()
           : Column(
               children: [
