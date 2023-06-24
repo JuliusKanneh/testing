@@ -134,7 +134,7 @@ class TweetCard extends ConsumerWidget {
                                           },
                                           error: (error, st) => ErrorPage(
                                               error: error.toString()),
-                                          loading: () => SizedBox()),
+                                          loading: () => const SizedBox()),
                                 HashTagText(text: tweet.text),
                                 if (tweet.tweetTypes == TweetType.image)
                                   CarouselImage(imageLinks: tweet.imageLinks),

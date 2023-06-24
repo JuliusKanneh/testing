@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone/commons/common.dart';
@@ -65,12 +67,24 @@ class UserProfile extends ConsumerWidget {
                                   context,
                                   EditProfileView.route(),
                                 );
+                              } else {
+                                log('Follow button clicked');
+                                ref
+                                    .read(
+                                        userProfileControllerProvider.notifier)
+                                    .followUser(
+                                      user: user,
+                                      currentUser: currentUser,
+                                      context: context,
+                                    );
                               }
                             },
                             child: Text(
                               currentUser.uid == user.uid
                                   ? 'Edit Profile'
-                                  : 'Follow',
+                                  : currentUser.followings.contains(user.uid)
+                                      ? 'Unfollow'
+                                      : 'Follow',
                               style: const TextStyle(
                                 color: Pallete.whiteColor,
                               ),

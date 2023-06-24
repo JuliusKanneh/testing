@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone/apis/storage_api.dart';
 import 'package:twitter_clone/apis/tweet_api.dart';
 import 'package:twitter_clone/apis/user_api.dart';
+import 'package:twitter_clone/commons/common.dart';
 import 'package:twitter_clone/models/tweet_model.dart';
 import 'package:twitter_clone/models/user_model.dart';
 import 'package:twitter_clone/core/utils.dart';
@@ -73,6 +74,34 @@ class UserProfileController extends StateNotifier<bool> {
     res.fold(
       (l) => showSnackbar(context, l.message),
       (r) => Navigator.pop(context),
+    );
+  }
+
+  void followUser({
+    required UserModel user,
+    required UserModel currentUser,
+    required BuildContext context,
+  }) async {
+    if (currentUser.followers.contains(user.uid)) {
+      //already following
+      user.followers.remove(currentUser.uid);
+      currentUser.followings.remove(user.uid);
+    } else {
+      //not following
+      user.followers.add(currentUser.uid);
+      currentUser.followings.add(user.uid);
+    }
+
+    user = user.copyWith(followers: user.followers);
+    currentUser = currentUser.copyWith(followings: currentUser.followings);
+
+    final res = await _userAPI.followUser(user);
+    res.fold(
+      (l) => ErrorText(error: l.message),
+      (r) async {
+        final res2 = await _userAPI.addToFollowing(currentUser);
+        res2.fold((l) => ErrorText(error: l.message), (r) => null);
+      },
     );
   }
 }
