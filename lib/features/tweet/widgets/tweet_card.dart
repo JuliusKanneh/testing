@@ -188,6 +188,16 @@ class TweetCard extends ConsumerWidget {
                                       ),
                                       LikeButton(
                                         size: 25,
+                                        onTap: (isLiked) async {
+                                          ref
+                                              .read(tweetControllerProvider
+                                                  .notifier)
+                                              .likeTweet(
+                                                tweet,
+                                                currentUser,
+                                              );
+                                          return !isLiked;
+                                        },
                                         likeBuilder: (isLiked) {
                                           return isLiked
                                               ? SvgPicture.asset(
@@ -219,13 +229,6 @@ class TweetCard extends ConsumerWidget {
                                               ),
                                             ),
                                           );
-                                        },
-                                        onTap: (isLiked) async {
-                                          ref
-                                              .read(tweetControllerProvider
-                                                  .notifier)
-                                              .likeTweet(tweet, currentUser);
-                                          return !isLiked;
                                         },
                                       ),
                                       IconButton(
